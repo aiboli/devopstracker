@@ -1,5 +1,5 @@
 {
-  "name": "NASA Picture of the day viewer",
+  "name": "Chromium Extension Tutorial P1",
   "version": "0.0.0.1",
   "manifest_version": 2,
   "description": "A chromium extension to show NASA's Picture of the Day.",

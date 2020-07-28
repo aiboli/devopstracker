@@ -2,10 +2,24 @@
   <head>
     <meta charset="UTF-8" />
     <title>NASA Picture of the Day</title>
+    <style>
+        button {
+            background-color: #336dab;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            font-size: 16px;
+        }
+    </style>
   </head>
   <body>
     <div>
-      <img src="/images/stars.jpeg" alt="stars" />
+    	<ul id="list"></ul>
+		<button onclick="getProjects()" id="getbtn">
+			Get Projects
+		</button>
+	    <script src="popup.js"></script>
     </div>
   </body>
 </html>
