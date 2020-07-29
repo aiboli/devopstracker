@@ -29,6 +29,10 @@ chrome.runtime.onMessage.addListener(
       case "getTeams":
         sendResponse({ result: teams });
         break;
+      case "setWorkItems":
+        work_items = request.workitems;
+        sendResponse({result: "set work items ok"});
+        break;
       case "getWorkItems":
         sendResponse({ result: work_items });
         break;

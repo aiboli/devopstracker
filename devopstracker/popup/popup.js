@@ -186,8 +186,8 @@ $('#team-list').on('change', function() {
 	$('#selected-team').html($('#team-list option:selected').html());
 });
 
-// get work items button
-$('#getworkitems').on('click', function() {
+// launch button
+$('#launchtracker').on('click', function() {
 	let projectId = global_project ? global_project : $('#project-list').val();
 	let teamId = global_team ? global_team : $('#team-list').val();
 	let projectName = $('#selected-project').html() ? $('#selected-project').html() : $('#project-list option:selected').html();
@@ -216,7 +216,7 @@ $('#getworkitems').on('click', function() {
 			global_token = access_token;
 			console.log(data);
 			// go to new page
-			// chrome.tabs.create({url: 'background.html'})
+			chrome.tabs.create({url: 'tracker/tracker.html'})
 		} else {
 			console.log(error);
 		}
@@ -295,11 +295,14 @@ function getWorkItems(projectid, teamid, callback) {
 				"Content-Type":"application/json",
 				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
 			},
-		}).done(function(res) {
-			return callback(res);
-		}).fail(function(err){
-			console.log(err);
-			return callback(null, err);
+		}).done(function(res2) {
+			chrome.runtime.sendMessage({cmd: "setWorkItems"}, function(response) {
+				console.log(response);
+			})
+			return callback(res2);
+		}).fail(function(err2){
+			console.log(err2);
+			return callback(null, err2);
 		})
 	}).fail(function(err) {
 		console.log(err);
