@@ -256,7 +256,7 @@ function getWorkItems(projectid, teamid, callback) {
 			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
 		},
 		data: JSON.stringify({
-			"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.State] <> 'Completed' AND [System.State] <> 'Closed' AND [System.State] <> 'Cut' AND [System.AssignedTo] = @me"
+			"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.State] <> 'Completed' AND [System.State] <> 'Resolved' AND [System.State] <> 'Closed' AND [System.State] <> 'Cut' AND [System.AssignedTo] = @me"
 		})
 	}).done(function(res) {
 		let ids = getWorkItemsList(res);
