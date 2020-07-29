@@ -1,7 +1,7 @@
 let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
-let work_items = [];
+let work_items = {};
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {

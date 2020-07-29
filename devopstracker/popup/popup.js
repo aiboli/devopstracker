@@ -8,7 +8,7 @@
 let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
-let work_items = [];
+let work_items = {};
 var global_project = null;
 var global_team = null;
 var global_token = null;
@@ -295,8 +295,21 @@ function getWorkItems(projectid, teamid, callback) {
 				"Content-Type":"application/json",
 				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
 			},
-		}).done(function(res2) {
-			chrome.runtime.sendMessage({cmd: "setWorkItems"}, function(response) {
+		}).done(function(res2) {	
+			let items = res2.value;
+			for(i = 0; i < items.length; i++) {
+				let id = items[i].id;
+				let details = items[i].fields;
+				let val = {
+					title: details["System.Title"],
+					state: details["System.State"],
+					iteration: details["System.IterationPath"],
+					type: details["System.WorkItemType"],
+					url: items[i].url
+				};
+				work_items[id] = val;
+			}
+			chrome.runtime.sendMessage({cmd: "setWorkItems", workitems: work_items}, function(response) {
 				console.log(response);
 			})
 			return callback(res2);
