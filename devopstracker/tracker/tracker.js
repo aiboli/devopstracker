@@ -1,50 +1,108 @@
-let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
-let projects = [];
-let teams = [];
-let user_name = "";
-let work_items = [];
-var global_project = null;
-var global_team = null;
-var global_token = null;
-
-// check if there is cache
-chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
-	console.log(result);
-	// if it is cached
-	if (result.projectId && result.teamId && result.token) {
-		// disable buttons and hide input fields
-		$('#project-list').hide();
-		$('#team-list').hide();
-		$('#selected-project').html(result.projectName);
-		$('#selected-team').html(result.teamName);
-		$('#selected-project').show();
-		$('#selected-team').show();
-		$('.settoken-button').attr('disabled', true);
-		$('.getprojects-button').attr('disabled', true);
-		global_project = result.projectId;
-		global_team = result.teamId;
-		global_token = result.token;
-	} else {
-		chrome.storage.sync.set({projectId: null}, function() {
-			console.log('project is set to ' + null);
-		});
-		chrome.storage.sync.set({teamId: null}, function() {
-			console.log('teamId is set to ' + null);
-		});
-		chrome.storage.sync.set({token: null}, function() {
-			console.log('token is set to ' + null);
-		});
-		chrome.storage.sync.set({teamName: null}, function() {
-			console.log('teamId is set to ' + null);
-		});
-		chrome.storage.sync.set({projectName: null}, function() {
-			console.log('token is set to ' + null);
-		});
-		global_project = null;
-		global_team = null;
-		global_token = null;
-	}
+$(document).ready(function() {
+    // send request to get the work item
+    chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
+        // get the cached data and send request
+        if (result.projectId && result.teamId && result.token) {
+            getWorkItems(result.projectId, result.teamId, result.token, function(data, error) {
+                if (data) {
+                    console.log(data);
+                    renderWorkItems(data);
+                } else {
+                    console.log(error);
+                }
+            });
+        } else {
+            // let user to input data
+            console.log('no data');
+        }
+    });
 });
+
+// function hasCachedData() {
+//     chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
+//         // if it is cached
+//         console.log(result);
+//         if (result.projectId && result.teamId && result.token) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     });
+// }
+
+function getWorkItems(projectid, teamid, token, callback) {
+	// send request to query all the work items
+	$.ajax({
+		type: 'POST',
+		url: `https://dev.azure.com/microsoft/${projectid}/${teamid}/_apis/wit/wiql?api-version=5.1`,
+		headers: {
+			"Content-Type":"application/json",
+			"Authorization": "Basic " + btoa('Basic' + ":" + token)
+		},
+		data: JSON.stringify({
+			"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.State] <> 'Completed' AND [System.State] <> 'Closed' AND [System.AssignedTo] = @me"
+		})
+	}).done(function(res) {
+		let ids = getWorkItemsList(res);
+		// getting work items details
+		$.ajax({
+			type: 'GET',
+			url: `https://dev.azure.com/microsoft/_apis/wit/workitems?ids=${ids.toString()}&api-version=6.0-preview.3`,
+			headers: {
+				"Content-Type":"application/json",
+				"Authorization": "Basic " + btoa('Basic' + ":" + token)
+			},
+		}).done(function(res) {
+			return callback(res);
+		}).fail(function(err){
+			console.log(err);
+			return callback(null, err);
+		})
+	}).fail(function(err) {
+		console.log(err);
+		return callback(null, err);
+	});
+}
+
+function renderWorkItems(data) {
+    if (!data || !data.count > 0) {
+        console.log('no data to render');
+        return;
+    } else {
+        let workItems = data.value;
+        for (let i = 0; i < workItems.length; i++) {
+            let workItem = workItems[i];
+            console.log(workItem);
+            let workItem_html = ``;
+            let workItem_object = {
+                title: workItem.fields['System.Title'],
+                state: workItem.fields['System.State'],
+                iteration: workItem.fields['System.IterationPath'],
+                deliverable: workItem.fields['System.WorkItemType'],
+                id: workItem.id,
+                url: workItem.url
+            }
+            workItem_html = `<tr class="workitem-column">
+            <td>${workItem_object.id}</td>
+            <td>${workItem_object.state}</td>
+            <td>${workItem_object.deliverable}</td>
+            <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${workItem_object.title}</a></td>
+            <td>${workItem_object.iteration}</td>
+            </tr>`;
+            $('#workitem-list').append(workItem_html);
+        }
+    }
+}
+
+// get all the work items
+function getWorkItemsList(data) {
+	let workItems = data.workItems;
+	let ids = [];
+	for (let i = 0; i < workItems.length; i++) {
+		ids.push(workItems[i].id);
+	}
+	return ids;
+}
 
 chrome.runtime.sendMessage({cmd: "getName"}, function(response) {
 	console.log("called getName");

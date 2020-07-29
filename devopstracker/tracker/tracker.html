@@ -109,7 +109,7 @@
         }
         .main-container {
             /* The image used */
-            background-image: url("/images/bg.jpg");
+            background-image: url("../images/bg.jpg");
             /* Full height */
             height: 100%;
             /* Center and scale the image nicely */
@@ -134,17 +134,60 @@
             color: white;
             font-size: 70px;
         }
+
+        .workitem-list {
+            color: white;
+            background-color: #333333;
+            opacity: 0.9;
+            border-collapse: collapse;
+            border-radius: 25px;
+        }
+
+        th {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 5px;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            padding: 5px 10px;
+        }
+
+        td a:link {
+            text-decoration: inherit;
+            color: inherit;
+        }
+
+        td a:visited {
+            text-decoration: inherit;
+            color: inherit;
+        }
+
+        .workitem-column:hover {
+            opacity: 0.8;
+        }
     </style>
   </head>
   <body>
     <div class="main-container">
         <div class="workitem-container">
             <div class="workitem-welcome">
-                <h2 id="hello">Hello</h2>
-                <button id="getworkitems-button">
-                  Get Work Items
-                </button>
-                <div class="workitem-list">
+                <h2>Hello</h2>
+                <div class="workitem-list-container">
+                    <table class="workitem-list" >
+                        <thead>
+                            <tr>
+                            <th>id</th>
+                            <th>status</th>
+                            <th>type</th>
+                            <th>title</th>
+                            <th>iteration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workitem-list">
+
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
