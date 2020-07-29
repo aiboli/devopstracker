@@ -27,6 +27,8 @@
     "persistent": true
   },
   "permissions": [
-    "storage"
+    "storage",
+    "tabs",
+    "background"
   ]
 }

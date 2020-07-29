@@ -196,6 +196,8 @@ $('#getworkitems').on('click', function() {
 			global_team = teamId;
 			global_token = access_token;
 			console.log(data);
+			// go to new page
+			chrome.tabs.create({url: 'background.html'})
 		} else {
 			console.log(error);
 		}
