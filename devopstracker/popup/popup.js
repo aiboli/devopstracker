@@ -9,7 +9,8 @@ let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
 let work_items = {};
-var global_project = null;
+var global_project_name = null;
+var global_project_id = null;
 var global_team = null;
 var global_token = null;
 // check if there is cache
@@ -26,7 +27,8 @@ chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName
 		$('#selected-team').show();
 		$('.settoken-button').attr('disabled', true);
 		$('.getprojects-button').attr('disabled', true);
-		global_project = result.projectId;
+		global_project_name = result.projectName;
+		global_project_id = result.projectId;
 		global_team = result.teamId;
 		global_token = result.token;
 	} else {
@@ -45,7 +47,8 @@ chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName
 		chrome.storage.sync.set({projectName: null}, function() {
 			console.log('token is set to ' + null);
 		});
-		global_project = null;
+		global_project_name = null;
+		global_project_id = null;
 		global_team = null;
 		global_token = null;
 	}
@@ -188,7 +191,7 @@ $('#team-list').on('change', function() {
 
 // launch button
 $('#launchtracker').on('click', function() {
-	let projectId = global_project ? global_project : $('#project-list').val();
+	let projectId = global_project_id ? global_project_id : $('#project-list').val();
 	let teamId = global_team ? global_team : $('#team-list').val();
 	let projectName = $('#selected-project').html() ? $('#selected-project').html() : $('#project-list option:selected').html();
 	let teamName = $('#selected-team').html() ? $('#selected-team').html() : $('#team-list option:selected').html();
@@ -211,7 +214,7 @@ $('#launchtracker').on('click', function() {
 			chrome.storage.sync.set({teamName: teamName}, function() {
 				console.log('teamName is set to ' + teamName);
 			});
-			global_project = projectId;
+			global_project_id = projectId;
 			global_team = teamId;
 			global_token = access_token;
 			console.log(data);
@@ -240,7 +243,7 @@ $('#clearsetting').on('click', function() {
 	chrome.storage.sync.set({projectName: null}, function() {
 		console.log('token is set to ' + null);
 	});
-	global_project = null;
+	global_project_id = null;
 	global_team = null;
 	global_token = null;
 	$('#project-list').show();
@@ -305,7 +308,7 @@ function getWorkItems(projectid, teamid, callback) {
 					state: details["System.State"],
 					iteration: details["System.IterationPath"],
 					type: details["System.WorkItemType"],
-					url: items[i].url
+					url: `https://dev.azure.com/microsoft/${global_project_name}/_workitems/edit/${id}`
 				};
 				work_items[id] = val;
 			}
