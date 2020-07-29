@@ -13,31 +13,18 @@ chrome.runtime.onMessage.addListener(
       case "getToken":
         sendResponse({ result: access_token });
         break;
+      case "setProjects":
+        projects = request.projects;
+        sendResponse({result: "ok"});
+        break;
       case "getProjects":
         if (access_token === "") {
           sendResponse({ result: "error", message: "PAT required" });
         }
-        if (projects.length === 0) {
-          console.log("calling API: /projects");
-          $.ajax({
-            type: 'GET',
-            url: 'https://dev.azure.com/microsoft/_apis/projects?api-version=5.1',
-            headers: {
-              "Content-Type":"application/json; charset=utf-8;",
-              "Authorization": "Basic " + btoa('Basic' + ":" + access_token)
-            }
-          }).done(function(res) {
-            let data = res;
-            projects = data.value;
-            console.log({ result: projects });
-            sendResponse({ result: projects });
-          }).fail(function(err){
-            alert("Try again champ!");
-            sendResponse({ result: "error", message: "Could not get projects" });
-          });
-        } else {
-          sendResponse({ result: projects });
+        if(projects.length === 0) {
+          sendResponse({ result: "error", message: "Projects arr not set yet" });
         }
+        sendResponse({ result: projects });
         break;
       case "getTeams":
         sendResponse({ result: teams });
@@ -49,6 +36,7 @@ chrome.runtime.onMessage.addListener(
         sendResponse({ result: "error", message: "Invalid or missing 'cmd'" });
         break;
     }
+
 
     //return true;
   }
