@@ -14,10 +14,16 @@
       "matches": [
         "<all_urls>"
       ],
-      "js": ["lib/jquery.min.js"]
+      "js": [
+        "lib/jquery.min.js"
+      ]
     }
   ],
   "browser_action": {
     "default_popup": "popup/popup.html"
+  },
+  "background": {
+    "scripts": ["lib/jquery.min.js", "background.js"],
+    "persistent": true
   }
 }
