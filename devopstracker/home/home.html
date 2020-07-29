@@ -134,6 +134,37 @@
             color: white;
             font-size: 70px;
         }
+
+        .workitem-list {
+            color: white;
+            background-color: #333333;
+            border-collapse: collapse;
+            border-radius: 25px;
+        }
+
+        th {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 5px;
+        }
+
+        td {
+            border-bottom: 1px solid #ddd;
+            padding: 5px 10px;
+        }
+
+        td a:link {
+            text-decoration: inherit;
+            color: inherit;
+        }
+
+        td a:visited {
+            text-decoration: inherit;
+            color: inherit;
+        }
+
+        .workitem-column:hover {
+            opacity: 0.8;
+        }
     </style>
   </head>
   <body>
@@ -142,9 +173,20 @@
             <div class="workitem-welcome">
                 <h2>Hello</h2>
                 <div class="workitem-list-container">
-                    <ul class="workitem-list" id="workitem-list">
+                    <table class="workitem-list" >
+                        <thead>
+                            <tr>
+                            <th>id</th>
+                            <th>status</th>
+                            <th>type</th>
+                            <th>title</th>
+                            <th>iteration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workitem-list">
 
-                    </ul>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

@@ -6,6 +6,7 @@ $(document).ready(function() {
             getWorkItems(result.projectId, result.teamId, result.token, function(data, error) {
                 if (data) {
                     console.log(data);
+                    renderWorkItems(data);
                 } else {
                     console.log(error);
                 }
@@ -71,16 +72,23 @@ function renderWorkItems(data) {
         let workItems = data.value;
         for (let i = 0; i < workItems.length; i++) {
             let workItem = workItems[i];
+            console.log(workItem);
             let workItem_html = ``;
             let workItem_object = {
-                title: workItem.System.Title,
-                state: workItem.System.TeamProject,
-                iteration: workItem.System.IterationPath,
-                deliverable: workItem.System.WorkItemType,
+                title: workItem.fields['System.Title'],
+                state: workItem.fields['System.State'],
+                iteration: workItem.fields['System.IterationPath'],
+                deliverable: workItem.fields['System.WorkItemType'],
                 id: workItem.id,
                 url: workItem.url
             }
-            workItem_html = `<li><a href="${workItem_object.url}" target="_blank">${workItem_object.title}</a></li>`
+            workItem_html = `<tr class="workitem-column">
+            <td>${workItem_object.id}</td>
+            <td>${workItem_object.state}</td>
+            <td>${workItem_object.deliverable}</td>
+            <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${workItem_object.title}</a></td>
+            <td>${workItem_object.iteration}</td>
+            </tr>`;
             $('#workitem-list').append(workItem_html);
         }
     }
