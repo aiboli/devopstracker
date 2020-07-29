@@ -73,7 +73,8 @@ function renderWorkItems(data) {
         for (let i = 0; i < workItems.length; i++) {
             let workItem = workItems[i];
             console.log(workItem);
-            let workItem_html = ``;
+			let workItem_html = ``;
+			let workItem_icon = ``;
             let workItem_object = {
                 title: workItem.fields['System.Title'],
                 state: workItem.fields['System.State'],
@@ -81,12 +82,11 @@ function renderWorkItems(data) {
                 deliverable: workItem.fields['System.WorkItemType'],
                 id: workItem.id,
                 url: workItem.url
-            }
+			}
             workItem_html = `<tr class="workitem-column">
-            <td>${workItem_object.id}</td>
             <td>${workItem_object.state}</td>
             <td>${workItem_object.deliverable}</td>
-            <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${workItem_object.title}</a></td>
+            <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${getWorkItemsIcon(workItem_object.deliverable)}${workItem_object.title}</a></td>
             <td>${workItem_object.iteration}</td>
             </tr>`;
             $('#workitem-list').append(workItem_html);
@@ -102,6 +102,18 @@ function getWorkItemsList(data) {
 		ids.push(workItems[i].id);
 	}
 	return ids;
+}
+
+function getWorkItemsIcon(type) {
+	if (type === 'Deliverable') {
+		return `<i class="fa fa-bug" style="font-size:20px"></i>`;
+	} else if (type === 'Bug') {
+		return `<i class="fa fa-check-square" style="font-size:20px"></i>`;
+	} else if (type === 'Task') {
+		return `<i class="fa fa-trophy" style="font-size:20px"></i>`;
+	} else {
+		return '';
+	}
 }
 
 chrome.runtime.sendMessage({cmd: "getName"}, function(response) {

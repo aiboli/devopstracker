@@ -2,6 +2,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>DevOps Tracker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* button {
             background-color: #336dab;
@@ -166,18 +167,20 @@
         .workitem-column:hover {
             opacity: 0.8;
         }
+        i {
+          margin:5px;
+        }
     </style>
   </head>
   <body>
     <div class="main-container">
         <div class="workitem-container">
             <div class="workitem-welcome">
-                <h2>Hello</h2>
+                <h2 id="hello">Hello</h2>
                 <div class="workitem-list-container">
                     <table class="workitem-list" >
                         <thead>
                             <tr>
-                            <th>id</th>
                             <th>status</th>
                             <th>type</th>
                             <th>title</th>
