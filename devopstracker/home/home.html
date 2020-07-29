@@ -1,13 +1,155 @@
 <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <title>Home Page</title>
-      <style>
-      </style>
-    </head>
-    <body>
-      <div>
-          <h4>home page</h4>
-      </div>
-    </body>
-  </html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>DevOps Tracker</title>
+    <style>
+        /* button {
+            background-color: #336dab;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            text-align: center;
+            font-size: 16px;
+        } */
+        body {
+            width: 100%;
+            margin: 0;
+        }
+        .project-button{
+          display:inline-block;
+          padding:0.3em 1.2em;
+          margin:0 0.1em 0.1em 0;
+          border:0.16em solid rgba(255,255,255,0);
+          border-radius:2em;
+          box-sizing: border-box;
+          text-decoration:none;
+          font-family:'Roboto',sans-serif;
+          font-weight:300;
+          color:#FFFFFF;
+          text-shadow: 0 0.04em 0.04em rgba(0,0,0,0.35);
+          text-align:center;
+          transition: all 0.2s;
+        }
+        .project-button:hover{
+          border-color: rgba(255,255,255,1);
+        }
+
+        .getprojects-button {
+          width: 100%;
+          height: 25px;
+          background-color: #00A4EF;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin-bottom: 5px;
+          display: inline;
+        }
+        .getprojects-button:disabled {
+          background-color: #737373;
+        }
+        .settoken-button {
+          width: 100%;
+          height: 25px;
+          background-color: #00A4EF;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+        .settoken-button:disabled {
+          background-color: grey;
+        }
+        .getworkitems-button {
+          width: 100%;
+          height: 25px;
+          background-color: #00A4EF;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+        .getworkitems-button:disabled {
+          background-color: #737373;
+        }
+        .clearsetting-button {
+          width: 100%;
+          height: 25px;
+          background-color: #F25022;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+        .clearsetting-button:disabled {
+          background-color: #737373;
+        }
+        .token-input {
+          width: 100%;
+          display: inline;
+        }
+
+        .project-list {
+          width: 100%;
+        }
+
+        .team-list {
+          width: 100%;
+        }
+
+        .selected-text {
+          display: none;
+          color: #7FBA00;
+        }
+        .main-container {
+            /* The image used */
+            background-image: url("../images/bg.jpg");
+            /* Full height */
+            height: 100%;
+            /* Center and scale the image nicely */
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+        .workitem-container {
+            width: 100%;
+            height: 100%;
+        }
+        .workitem-welcome {
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            text-align: center;
+        }
+        .workitem-welcome h2 {
+            color: white;
+            font-size: 70px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="main-container">
+        <div class="workitem-container">
+            <div class="workitem-welcome">
+                <h2>Hello</h2>
+                <div class="workitem-list-container">
+                    <ul class="workitem-list" id="workitem-list">
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../lib/jquery.min.js"></script>
+    <script src="home.js"></script>
+  </body>
+</html>
