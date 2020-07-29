@@ -1,9 +1,8 @@
 $(document).ready(function() {
-    // if we already have user's data
-    if (hasCachedData()) {
-        // send request to get the work item
-        chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
-            // get the cached data and send request
+    // send request to get the work item
+    chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
+        // get the cached data and send request
+        if (result.projectId && result.teamId && result.token) {
             getWorkItems(result.projectId, result.teamId, result.token, function(data, error) {
                 if (data) {
                     console.log(data);
@@ -11,23 +10,24 @@ $(document).ready(function() {
                     console.log(error);
                 }
             });
-        });
-    } else {
-        // let user to input data
-        console.log('no data');
-    }
-});
-
-function hasCachedData() {
-    chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
-        // if it is cached
-        if (result.projectId && result.teamId && result.token) {
-            return true;
         } else {
-            return false;
+            // let user to input data
+            console.log('no data');
         }
     });
-}
+});
+
+// function hasCachedData() {
+//     chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
+//         // if it is cached
+//         console.log(result);
+//         if (result.projectId && result.teamId && result.token) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     });
+// }
 
 function getWorkItems(projectid, teamid, token, callback) {
 	// send request to query all the work items
@@ -84,4 +84,14 @@ function renderWorkItems(data) {
             $('#workitem-list').append(workItem_html);
         }
     }
+}
+
+// get all the work items
+function getWorkItemsList(data) {
+	let workItems = data.workItems;
+	let ids = [];
+	for (let i = 0; i < workItems.length; i++) {
+		ids.push(workItems[i].id);
+	}
+	return ids;
 }
