@@ -1,5 +1,5 @@
 let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
-let projects = [1, 2, 3];
+let projects = [];
 let teams = [];
 let work_items = [];
 
@@ -16,10 +16,8 @@ chrome.runtime.onMessage.addListener(
       case "getProjects":
         if (access_token === "") {
           sendResponse({ result: "error", message: "PAT required" });
-          return;
         }
-        console.log("projects arr len: " + projects.length);
-        if (projects.length) {
+        if (projects.length === 0) {
           console.log("calling API: /projects");
           $.ajax({
             type: 'GET',
@@ -31,13 +29,15 @@ chrome.runtime.onMessage.addListener(
           }).done(function(res) {
             let data = res;
             projects = data.value;
+            console.log({ result: projects });
+            sendResponse({ result: projects });
           }).fail(function(err){
             alert("Try again champ!");
             sendResponse({ result: "error", message: "Could not get projects" });
-            return;
           });
+        } else {
+          sendResponse({ result: projects });
         }
-        sendResponse({ result: projects });
         break;
       case "getTeams":
         sendResponse({ result: teams });
