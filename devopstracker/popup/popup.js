@@ -187,7 +187,7 @@ $('#team-list').on('change', function() {
 });
 
 // get work items button
-$('#getworkitems').on('click', function() {
+$('#launchtracker').on('click', function() {
 	let projectId = global_project ? global_project : $('#project-list').val();
 	let teamId = global_team ? global_team : $('#team-list').val();
 	let projectName = $('#selected-project').html() ? $('#selected-project').html() : $('#project-list option:selected').html();
@@ -216,7 +216,7 @@ $('#getworkitems').on('click', function() {
 			global_token = access_token;
 			console.log(data);
 			// go to new page
-			chrome.tabs.create({url: 'background.html'})
+			chrome.tabs.create({url: 'tracker/tracker.html'})
 		} else {
 			console.log(error);
 		}
