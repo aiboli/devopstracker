@@ -49,47 +49,13 @@ if (getProjectsBtn) {
 			for(i = 0; i < projects.length; i++) {
 				let name = projects[i].name;
 				// create project button
-				$('#list').append(createProjectOption(projects[i]));
+				$('#project-list').append(createProjectOption(projects[i]));
 			}
-
-			// for(i = 0; i < projects.length; i++) {
-		    // 	let name = projects[i].name;
-			// 	var ul = document.getElementById("list");
-			// 	var li = document.createElement("li");
-			// 	li.setAttribute('id', name);
-			// 	li.appendChild(document.createTextNode(name));
-			// 	ul.appendChild(li);
-		    // }
           }).fail(function(err){
             alert("Try again champ!");
             return;
           });
 		}
-
-		chrome.runtime.sendMessage({cmd: "setProjects"}, function(response) {
-			console.log(response);
-			if(!response.result || response.result === "error") return;
-			projects = response.result;
-			// sort projects
-			projects.sort(function(a, b) {
-				let a_name = a.name.toUpperCase();
-				let b_name = b.name.toUpperCase();
-				if (a_name > b_name) {
-					return 1;
-				} else if (a_name < b_name) {
-					return -1;
-				} else {
-					return 0;
-				}
-			});
-			console.log(projects);
-			for(i = 0; i < projects.length; i++) {
-				let name = projects[i].name;
-				// create project button
-				$('#list').append(createProjectOption(projects[i]));
-			}
-		});
-
 		var ul = document.getElementById("list");
 
 		// $.ajax({
@@ -130,11 +96,56 @@ if (getProjectsBtn) {
 	};
 }
 
+$('#project-list').on('change', function() {
+	let projectId = $(this).val();
+	console.log(projectId);
+	getTermsByProject(projectId, function(res) {
+		let data = res;
+		teams = data.value;
+		// sort projects
+		teams.sort(function(a, b) {
+			let a_name = a.name.toUpperCase();
+			let b_name = b.name.toUpperCase();
+			if (a_name > b_name) {
+				return 1;
+			} else if (a_name < b_name) {
+				return -1;
+			} else {
+				return 0;
+			}
+		});
+		$('#team-list').empty();
+		for(i = 0; i < teams.length; i++) {
+			$('#team-list').append(createTeamOption(teams[i]));
+		}
+	});
+});
+
 // create button component
 function createProjectOption(project) {
-	let button = `<option value="${project.id}">${project.name}</option>`;
-	return button;
+	let option = `<option value="${project.id}">${project.name}</option>`;
+	return option;
 }
+
+function createTeamOption(team) {
+	let option = `<option value="${team.id}">${team.name}</option>`;
+	return option;
+}
+
+function getTermsByProject(project, callback) {
+	$.ajax({
+		  type: 'GET',
+		  url: `https://dev.azure.com/microsoft/_apis/projects/${project}/teams?api-version=6.0-preview.3`,
+		  headers: {
+			  "Content-Type":"application/json; charset=utf-8;",
+			  "Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+		  }
+	  }).done(function(res) {
+		  return callback(res);
+	  }).fail(function(err) {
+		  return callback(err, null);
+	  });
+  }
 
 const tokenInput = document.getElementById("token");
 const setTokenBtn = document.getElementById("settoken");

@@ -58,6 +58,21 @@ function getMyTeams(callback) {
 	});
 }
 
+function getTermsByProject(project, callback) {
+  $.ajax({
+		type: 'GET',
+		url: `https://dev.azure.com/microsoft/_apis/projects/${project}/teams?api-version=6.0-preview.3`,
+		headers: {
+			"Content-Type":"application/json; charset=utf-8;",
+			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+		}
+	}).done(function(res) {
+		return callback(res);
+	}).fail(function(err) {
+		return callback(err, null);
+	});
+}
+
 // get the teams information
 function getWorkItems(callback) {
 	// send request to query all the work items
