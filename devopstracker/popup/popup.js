@@ -54,6 +54,16 @@ chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName
 const getProjectsBtn = document.getElementById("getprojects");
 if (getProjectsBtn) {
 	getProjectsBtn.onclick = function() {
+		if (projects.length > 0) return;
+
+		chrome.runtime.sendMessage({cmd: "getProjects"}, function(response) {
+			if(response.result && response.result.length > 0) {
+				projects = response.result;
+				fillProjectsDropdown();
+				return;
+			}
+		})
+
 		if (access_token === "") {
 			chrome.runtime.sendMessage({cmd: "getToken"}, function(response) {
 				console.log(response);
@@ -86,18 +96,19 @@ if (getProjectsBtn) {
 					return 0;
 				}
 			});
-			console.log(projects);
-			for(i = 0; i < projects.length; i++) {
-				let name = projects[i].name;
-				// create project button
-				$('#project-list').append(createProjectOption(projects[i]));
-			}
+
+			chrome.runtime.sendMessage({ cmd: "setProjects", projects: projects }, function(response) {
+				console.log(response);
+			});
+
+			fillProjectsDropdown();
+
           }).fail(function(err){
             alert("Try again champ!");
             return;
           });
 		}
-		var ul = document.getElementById("list");
+		//var ul = document.getElementById("list");
 
 		// $.ajax({
 		// 	type: 'GET',
@@ -137,11 +148,19 @@ if (getProjectsBtn) {
 	};
 }
 // listeners
+
+// const projectsDropdown = document.getElementById("project-list");
+// if (projectsDropdown) {
+// 	projectsDropdown.onchange = function() {
+
+// 	}
+// }
+
 $('#project-list').on('change', function() {
-	let projectId = $(this).val();
+	let projectId = $(this).val();//$("#project-list").find(':selected').attr('id');
 	$('#selected-project').html($('#project-list option:selected').html());
-	console.log(projectId);
-	getTermsByProject(projectId, function(res) {
+	console.log("project id: " + projectId);
+	getTeamsByProject(projectId, function(res) {
 		let data = res;
 		teams = data.value;
 		// sort projects
@@ -232,21 +251,15 @@ $('#clearsetting').on('click', function() {
 	$('.getprojects-button').attr('disabled', false);
 });
 
-// create button component
-function createProjectOption(project) {
-	let option = `<option value="${project.id}">${project.name}</option>`;
-	return option;
-}
-
 function createTeamOption(team) {
 	let option = `<option value="${team.id}">${team.name}</option>`;
 	return option;
 }
 
-function getTermsByProject(project, callback) {
-	$.ajax({
+function getTeamsByProject(projectId, callback) {
+  $.ajax({
 		type: 'GET',
-		url: `https://dev.azure.com/microsoft/_apis/projects/${project}/teams?api-version=6.0-preview.3`,
+		url: `https://dev.azure.com/microsoft/_apis/projects/${projectId}/teams?api-version=6.0-preview.3`,
 		headers: {
 			"Content-Type":"application/json; charset=utf-8;",
 			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
@@ -302,11 +315,22 @@ function getWorkItemsList(data) {
 	return ids;
 }
 
+function fillProjectsDropdown() {
+	for(i = 0; i < projects.length; i++) {
+		let name = projects[i].name;
+		// create project button
+		let option = `<option value="${projects[i].id}">${name}</option>`;
+		$('#project-list').append(option);
+	}
+}
+
 const tokenInput = document.getElementById("token");
 const setTokenBtn = document.getElementById("settoken");
 if (setTokenBtn) {
 	setTokenBtn.onclick = function() {
-		access_token = tokenInput.value;
+		let pat = tokenInput.value;
+		if (pat === "") return;
+		access_token = pat;
 		chrome.runtime.sendMessage({cmd: "setToken", token: access_token}, function(response) {
 			console.log(response);
 		});
