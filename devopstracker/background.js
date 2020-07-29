@@ -2,10 +2,18 @@ let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
 let work_items = {};
+let user_name = [];
 
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
     switch (request.cmd) {
+      case "getName":
+        sendResponse({ result: user_name });
+        break;
+      case "setName":
+        user_name = request.name;
+        sendResponse({ result: "set user name ok"});
+        break;
       case "setToken":
         access_token = request.token;
         sendResponse({ result: "set token ok" });

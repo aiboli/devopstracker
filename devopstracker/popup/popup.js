@@ -9,10 +9,17 @@ let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
 let work_items = {};
+let user_name = [];
+
 var global_project_name = null;
 var global_project_id = null;
 var global_team = null;
 var global_token = null;
+
+chrome.runtime.sendMessage({cmd: "getName"}, function(response) {
+	if(response.result) user_name = response.result;
+});
+
 // check if there is cache
 chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
 	console.log(result);
@@ -111,43 +118,6 @@ if (getProjectsBtn) {
             return;
           });
 		}
-		//var ul = document.getElementById("list");
-
-		// $.ajax({
-		// 	type: 'GET',
-		// 	url: 'https://dev.azure.com/microsoft/_apis/projects?api-version=5.1',
-		// 	headers: {
-		// 		"Content-Type":"application/json; charset=utf-8;",
-		// 		"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
-		// 	}
-		// }).done(function(res) {
-
-		// });
-		// if (access_token === "") {
-		// 	chrome.runtime.sendMessage({cmd: "getToken"}, function(response) {
-		// 		console.log(response);
-		// 		var token = response.result;
-		// 		if (token === "") return;
-		// 		access_token = token;
-		// 	});
-		// }
-
-		// var projects = [];
-
-		// chrome.runtime.sendMessage({cmd: "getProjects"}, function(response) {
-		// 	console.log(response);
-		// 	if(!response.result || response.result === "error") return;
-		// 	projects = response.result;
-		// });
-
-		// for(i = 0; i < projects.length; i++) {
-	    // 	let name = projects[i].name;
-		// 	var ul = document.getElementById("list");
-		// 	var li = document.createElement("li");
-		// 	li.setAttribute('id', name);
-		// 	li.appendChild(document.createTextNode(name));
-		// 	ul.appendChild(li);
-	    // }
 	};
 }
 // listeners
@@ -314,7 +284,14 @@ function getWorkItems(projectid, teamid, callback) {
 			}
 			chrome.runtime.sendMessage({cmd: "setWorkItems", workitems: work_items}, function(response) {
 				console.log(response);
-			})
+			});
+
+			if(user_name.length === 0) {
+				let name = items[0].fields["System.AssignedTo"].displayName.split(" ");
+				chrome.runtime.sendMessage({cmd: "setName", name: name}, function(response) {
+					console.log(response);
+				});
+			}
 			return callback(res2);
 		}).fail(function(err2){
 			console.log(err2);

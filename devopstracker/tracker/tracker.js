@@ -1,10 +1,12 @@
 let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
+let user_name = "";
 let work_items = [];
 var global_project = null;
 var global_team = null;
 var global_token = null;
+
 // check if there is cache
 chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
 	console.log(result);
@@ -43,6 +45,15 @@ chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName
 		global_token = null;
 	}
 });
+
+chrome.runtime.sendMessage({cmd: "getName"}, function(response) {
+	console.log("called getName");
+	if(!response.result || response.result.length === 0) return;
+	console.log("got response");
+	user_name = response.result;
+	const helloText = document.getElementById("hello");
+	helloText.innerHTML = "Hello, " + user_name[0];
+})
 
 const getWorkItemsBtn = document.getElementById("getworkitems-button");
 if (getWorkItemsBtn) {
