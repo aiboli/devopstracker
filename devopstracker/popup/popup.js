@@ -23,35 +23,48 @@ if (getProjectsBtn) {
 			}
 		}).done(function(res) {
 			// returned json file
-			//console.log(res);
 			let data = res;
 			var projects = data.value;
+			// sort projects
+			projects.sort(function(a, b) {
+				let a_name = a.name.toUpperCase();
+				let b_name = b.name.toUpperCase();
+				if (a_name > b_name) {
+					return 1;
+				} else if (a_name < b_name) {
+					return -1;
+				} else {
+					return 0;
+				}
+			});
+			console.log(projects);
 		    for(i = 0; i < projects.length; i++) {
-		    	let name = projects[i].name;
-
-		    	$.ajax({
-		    		type: 'GET',
-		    		url: projects[i].url,
-					headers: {
-						"Content-Type":"application/json; charset=utf-8;",
-						"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
-					}
-		    	}).done(function(res2) {
+				let name = projects[i].name;
+				// create project button
+				$('#list').append(createProjectButton(projects[i]));
+		    	// $.ajax({
+		    	// 	type: 'GET',
+		    	// 	url: projects[i].url,
+				// 	headers: {
+				// 		"Content-Type":"application/json; charset=utf-8;",
+				// 		"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
+				// 	}
+		    	// }).done(function(res2) {
 		    		//console.log(res2["_links"]["web"]["href"]);
 		    		//https://dev.azure.com/microsoft/Base
 		    		//res2["_links"]["web"]["href"]
 
-					var a = document.createElement("a");
-					a.setAttribute('href', res2["_links"]["web"]["href"]);
-					a.setAttribute('target', "_blank");
-					var li = document.createElement("li");
-					li.setAttribute('id', name);
-					li.appendChild(document.createTextNode(name));
-					a.appendChild(li);
-					ul.appendChild(a);
-		    	}).fail(function(err2){
-		    		alert("couldn't get URL");
-		    	});
+					// var a = document.createElement("a");
+					// a.setAttribute('href', res2["_links"]["web"]["href"]);
+					// a.setAttribute('target', "_blank");
+					// var li = document.createElement("li");
+					// li.setAttribute('id', name);
+					// li.appendChild(document.createTextNode(name));
+					// a.appendChild(li);
+					// ul.appendChild(a);
+		    	// }).fail(function(err2){
+		    	// 	alert("couldn't get URL");
+		    	// });
 
 
 		    }
@@ -122,6 +135,12 @@ function getWorkItemsList(data) {
 		ids.push(workItems[i].id);
 	}
 	return ids;
+}
+
+// create button component
+function createProjectButton(project) {
+	let button = `<li><button class='project-button'>${project.name}</button></li>`;
+	return button;
 }
 
 const tokenInput = document.getElementById("token");
