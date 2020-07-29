@@ -37,7 +37,7 @@
         .getprojects-button {
           width: 100%;
           height: 25px;
-          background-color: #336dab;
+          background-color: #00A4EF;
           text-align: center;
           border: none;
           color: white;
@@ -45,11 +45,13 @@
           margin-bottom: 5px;
           display: inline;
         }
-
+        .getprojects-button:disabled {
+          background-color: #737373;
+        }
         .settoken-button {
           width: 100%;
           height: 25px;
-          background-color: #336dab;
+          background-color: #00A4EF;
           text-align: center;
           border: none;
           color: white;
@@ -57,7 +59,37 @@
           margin: 5px 0px;
           display: inline;
         }
-
+        .settoken-button:disabled {
+          background-color: grey;
+        }
+        .getworkitems-button {
+          width: 100%;
+          height: 25px;
+          background-color: #00A4EF;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+        .getworkitems-button:disabled {
+          background-color: #737373;
+        }
+        .clearsetting-button {
+          width: 100%;
+          height: 25px;
+          background-color: #F25022;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+        .clearsetting-button:disabled {
+          background-color: #737373;
+        }
         .token-input {
           width: 100%;
           display: inline;
@@ -69,6 +101,11 @@
 
         .team-list {
           width: 100%;
+        }
+
+        .selected-text {
+          display: none;
+          color: #7FBA00;
         }
     </style>
   </head>
@@ -83,12 +120,20 @@
         <label for="list">Choose a project:</label>
         <select class="project-list" name="project-list" id="project-list">
         </select>
+        <p class="selected-text" id="selected-project"></p>
       </div>
       <div class="info-container">
         <label for="team-list">Choose a team:</label>
         <select class="team-list" name="team-list" id="team-list">
         </select>
+        <p class="selected-text" id="selected-team"></p>
       </div>
+      <button class="getworkitems-button" id="getworkitems">
+			  Get WorkItems
+      </button>
+      <button class="clearsetting-button" id="clearsetting">
+			  Clear Setting
+      </button>
     	<script src="../lib/jquery.min.js"></script>
 	    <script src="popup.js"></script>
     </div>

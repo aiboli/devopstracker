@@ -9,6 +9,47 @@ let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
 let projects = [];
 let teams = [];
 let work_items = [];
+var global_project = null;
+var global_team = null;
+var global_token = null;
+// check if there is cache
+chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
+	console.log(result);
+	// if it is cached
+	if (result.projectId && result.teamId && result.token) {
+		// disable buttons and hide input fields
+		$('#project-list').hide();
+		$('#team-list').hide();
+		$('#selected-project').html(result.projectName);
+		$('#selected-team').html(result.teamName);
+		$('#selected-project').show();
+		$('#selected-team').show();
+		$('.settoken-button').attr('disabled', true);
+		$('.getprojects-button').attr('disabled', true);
+		global_project = result.projectId;
+		global_team = result.teamId;
+		global_token = result.token;
+	} else {
+		chrome.storage.sync.set({projectId: null}, function() {
+			console.log('project is set to ' + null);
+		});
+		chrome.storage.sync.set({teamId: null}, function() {
+			console.log('teamId is set to ' + null);
+		});
+		chrome.storage.sync.set({token: null}, function() {
+			console.log('token is set to ' + null);
+		});
+		chrome.storage.sync.set({teamName: null}, function() {
+			console.log('teamId is set to ' + null);
+		});
+		chrome.storage.sync.set({projectName: null}, function() {
+			console.log('token is set to ' + null);
+		});
+		global_project = null;
+		global_team = null;
+		global_token = null;
+	}
+});
 
 const getProjectsBtn = document.getElementById("getprojects");
 if (getProjectsBtn) {
@@ -95,9 +136,10 @@ if (getProjectsBtn) {
 	    // }
 	};
 }
-
+// listeners
 $('#project-list').on('change', function() {
 	let projectId = $(this).val();
+	$('#selected-project').html($('#project-list option:selected').html());
 	console.log(projectId);
 	getTermsByProject(projectId, function(res) {
 		let data = res;
@@ -121,6 +163,75 @@ $('#project-list').on('change', function() {
 	});
 });
 
+$('#team-list').on('change', function() {
+	$('#selected-team').html($('#team-list option:selected').html());
+});
+
+// get work items button
+$('#getworkitems').on('click', function() {
+	let projectId = global_project ? global_project : $('#project-list').val();
+	let teamId = global_team ? global_team : $('#team-list').val();
+	let projectName = $('#selected-project').html() ? $('#selected-project').html() : $('#project-list option:selected').html();
+	let teamName = $('#selected-team').html() ? $('#selected-team').html() : $('#team-list option:selected').html();
+	getWorkItems(projectId, teamId, function(data, error) {
+		// if success
+		if (data) {
+			// cache the data, using chrome local storage
+			chrome.storage.sync.set({projectId: projectId}, function() {
+				console.log('project is set to ' + projectId);
+			});
+			chrome.storage.sync.set({teamId: teamId}, function() {
+				console.log('teamId is set to ' + teamId);
+			});
+			chrome.storage.sync.set({token: access_token}, function() {
+				console.log('token is set to ' + access_token);
+			});
+			chrome.storage.sync.set({projectName: projectName}, function() {
+				console.log('projectName is set to ' + projectId);
+			});
+			chrome.storage.sync.set({teamName: teamName}, function() {
+				console.log('teamName is set to ' + teamName);
+			});
+			global_project = projectId;
+			global_team = teamId;
+			global_token = access_token;
+			console.log(data);
+		} else {
+			console.log(error);
+		}
+	});
+});
+
+//clear storage button
+$('#clearsetting').on('click', function() {
+	chrome.storage.sync.set({projectId: null}, function() {
+		console.log('project is set to ' + null);
+	});
+	chrome.storage.sync.set({teamId: null}, function() {
+		console.log('teamId is set to ' + null);
+	});
+	chrome.storage.sync.set({token: null}, function() {
+		console.log('token is set to ' + null);
+	});
+	chrome.storage.sync.set({teamName: null}, function() {
+		console.log('teamId is set to ' + null);
+	});
+	chrome.storage.sync.set({projectName: null}, function() {
+		console.log('token is set to ' + null);
+	});
+	global_project = null;
+	global_team = null;
+	global_token = null;
+	$('#project-list').show();
+	$('#team-list').show();
+	$('#selected-project').html('');
+	$('#selected-team').html('');
+	$('#selected-project').hide();
+	$('#selected-team').hide();
+	$('.settoken-button').attr('disabled', false);
+	$('.getprojects-button').attr('disabled', false);
+});
+
 // create button component
 function createProjectOption(project) {
 	let option = `<option value="${project.id}">${project.name}</option>`;
@@ -134,18 +245,62 @@ function createTeamOption(team) {
 
 function getTermsByProject(project, callback) {
 	$.ajax({
-		  type: 'GET',
-		  url: `https://dev.azure.com/microsoft/_apis/projects/${project}/teams?api-version=6.0-preview.3`,
-		  headers: {
-			  "Content-Type":"application/json; charset=utf-8;",
-			  "Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
-		  }
-	  }).done(function(res) {
-		  return callback(res);
-	  }).fail(function(err) {
-		  return callback(err, null);
-	  });
-  }
+		type: 'GET',
+		url: `https://dev.azure.com/microsoft/_apis/projects/${project}/teams?api-version=6.0-preview.3`,
+		headers: {
+			"Content-Type":"application/json; charset=utf-8;",
+			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+		}
+	}).done(function(res) {
+		return callback(res);
+	}).fail(function(err) {
+		return callback(null, err);
+	});
+}
+
+function getWorkItems(projectid, teamid, callback) {
+	// send request to query all the work items
+	$.ajax({
+		type: 'POST',
+		url: `https://dev.azure.com/microsoft/${projectid}/${teamid}/_apis/wit/wiql?api-version=5.1`,
+		headers: {
+			"Content-Type":"application/json",
+			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+		},
+		data: JSON.stringify({
+			"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.State] <> 'Completed' AND [System.State] <> 'Closed' AND [System.AssignedTo] = @me"
+		})
+	}).done(function(res) {
+		let ids = getWorkItemsList(res);
+		// getting work items details
+		$.ajax({
+			type: 'GET',
+			url: `https://dev.azure.com/microsoft/_apis/wit/workitems?ids=${ids.toString()}&api-version=6.0-preview.3`,
+			headers: {
+				"Content-Type":"application/json",
+				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+			},
+		}).done(function(res) {
+			return callback(res);
+		}).fail(function(err){
+			console.log(err);
+			return callback(null, err);
+		})
+	}).fail(function(err) {
+		console.log(err);
+		return callback(null, err);
+	});
+}
+
+// get all the work items
+function getWorkItemsList(data) {
+	let workItems = data.workItems;
+	let ids = [];
+	for (let i = 0; i < workItems.length; i++) {
+		ids.push(workItems[i].id);
+	}
+	return ids;
+}
 
 const tokenInput = document.getElementById("token");
 const setTokenBtn = document.getElementById("settoken");

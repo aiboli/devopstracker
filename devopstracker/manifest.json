@@ -25,5 +25,8 @@
   "background": {
     "scripts": ["lib/jquery.min.js", "background.js"],
     "persistent": true
-  }
+  },
+  "permissions": [
+    "storage"
+  ]
 }
