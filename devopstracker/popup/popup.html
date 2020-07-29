@@ -3,14 +3,18 @@
     <meta charset="UTF-8" />
     <title>DevOps Tracker</title>
     <style>
-        button {
+      body {
+        width: 200px;
+        height: auto;
+      }
+        /* button {
             background-color: #336dab;
             border: none;
             color: white;
             padding: 15px 32px;
             text-align: center;
             font-size: 16px;
-        }
+        } */
         .project-button{
           display:inline-block;
           padding:0.3em 1.2em;
@@ -29,17 +33,53 @@
         .project-button:hover{
           border-color: rgba(255,255,255,1);
         }
+
+        .getprojects-button {
+          width: 100%;
+          height: 25px;
+          background-color: #336dab;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin-bottom: 5px;
+          display: inline;
+        }
+
+        .settoken-button {
+          width: 100%;
+          height: 25px;
+          background-color: #336dab;
+          text-align: center;
+          border: none;
+          color: white;
+          padding: 0 10px;
+          margin: 5px 0px;
+          display: inline;
+        }
+
+        .token-input {
+          width: 100%;
+          display: inline;
+        }
+
+        .project-list {
+          width: 100%;
+        }
     </style>
   </head>
   <body>
     <div>
-    	<input type="text" id="token"/>
-    	<button id="settoken">Enter</button>
-		  <button id="getprojects">
+      <input class="token-input" type="text" id="token"/>
+    	<button class="settoken-button" id="settoken">Enter</button>
+		  <button class="getprojects-button" id="getprojects">
 			  Get Projects
-    	</button>
-    	<ul id="list" style="list-style: none;">
-      </ul>
+      </button>
+      <div class="info-container">
+        <label for="list">Choose a project:</label>
+        <select class="project-list" name="project-lis" id="list">
+        </select>
+      </div>
     	<script src="../lib/jquery.min.js"></script>
 	    <script src="popup.js"></script>
     </div>
