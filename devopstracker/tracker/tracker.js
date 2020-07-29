@@ -69,12 +69,12 @@ function renderWorkItems(data) {
         console.log('no data to render');
         return;
     } else {
-        let workItems = data.value;
+		let workItems = data.value;
+		workItems = sortWorkItem(workItems);
         for (let i = 0; i < workItems.length; i++) {
             let workItem = workItems[i];
             console.log(workItem);
 			let workItem_html = ``;
-			let workItem_icon = ``;
             let workItem_object = {
                 title: workItem.fields['System.Title'],
                 state: workItem.fields['System.State'],
@@ -84,9 +84,9 @@ function renderWorkItems(data) {
                 url: workItem.url
 			}
             workItem_html = `<tr class="workitem-column">
-            <td>${workItem_object.state}</td>
+            <td class="center">${workItem_object.state}</td>
             <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${getWorkItemsIcon(workItem_object.deliverable)}${workItem_object.title}</a></td>
-            <td>${workItem_object.iteration}</td>
+            <td class="center">${workItem_object.iteration}</td>
             </tr>`;
             $('#workitem-list').append(workItem_html);
         }
@@ -134,4 +134,16 @@ if (getWorkItemsBtn) {
 			console.log(work_items);
 		});
 	}
+}
+
+function sortWorkItem(array) {
+	let ordering = {
+		"Proposed":5,
+		"Started":10,
+		"Resolved":1,
+		"Committed":8,
+		"Active":10
+	};
+	array.sort(function(a,b) { return ordering[b.fields['System.State']] - ordering[a.fields['System.State']]; })
+	return array;
 }
