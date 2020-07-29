@@ -85,7 +85,6 @@ function renderWorkItems(data) {
 			}
             workItem_html = `<tr class="workitem-column">
             <td>${workItem_object.state}</td>
-            <td>${workItem_object.deliverable}</td>
             <td><a href='https://microsoft.visualstudio.com/_workitems/edit/${workItem_object.id}'>${getWorkItemsIcon(workItem_object.deliverable)}${workItem_object.title}</a></td>
             <td>${workItem_object.iteration}</td>
             </tr>`;
