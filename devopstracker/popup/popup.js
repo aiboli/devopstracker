@@ -186,7 +186,7 @@ $('#team-list').on('change', function() {
 	$('#selected-team').html($('#team-list option:selected').html());
 });
 
-// get work items button
+// launch button
 $('#launchtracker').on('click', function() {
 	let projectId = global_project ? global_project : $('#project-list').val();
 	let teamId = global_team ? global_team : $('#team-list').val();
@@ -295,11 +295,14 @@ function getWorkItems(projectid, teamid, callback) {
 				"Content-Type":"application/json",
 				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
 			},
-		}).done(function(res) {
-			return callback(res);
-		}).fail(function(err){
-			console.log(err);
-			return callback(null, err);
+		}).done(function(res2) {
+			chrome.runtime.sendMessage({cmd: "setWorkItems"}, function(response) {
+				console.log(response);
+			})
+			return callback(res2);
+		}).fail(function(err2){
+			console.log(err2);
+			return callback(null, err2);
 		})
 	}).fail(function(err) {
 		console.log(err);
