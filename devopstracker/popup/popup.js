@@ -5,7 +5,10 @@
 //   };
 // }
 
-var access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
+let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
+let projects = [];
+let teams = [];
+let work_items = [];
 
 const getProjectsBtn = document.getElementById("getprojects");
 if (getProjectsBtn) {
@@ -19,22 +22,36 @@ if (getProjectsBtn) {
 			});
 		}
 
-		var projects = [];
+		if(!projects.length) {
+			$.ajax({
+            type: 'GET',
+            url: 'https://dev.azure.com/microsoft/_apis/projects?api-version=5.1',
+            headers: {
+              "Content-Type":"application/json; charset=utf-8;",
+              "Authorization": "Basic " + btoa('Basic' + ":" + access_token)
+            }
+          }).done(function(res) {
+            let data = res;
+            projects = data.value;
+            
 
-		chrome.runtime.sendMessage({cmd: "getProjects"}, function(response) {
+			for(i = 0; i < projects.length; i++) {
+		    	let name = projects[i].name;
+				var ul = document.getElementById("list");
+				var li = document.createElement("li");
+				li.setAttribute('id', name);
+				li.appendChild(document.createTextNode(name));
+				ul.appendChild(li);
+		    }
+          }).fail(function(err){
+            alert("Try again champ!");
+            return;
+          });
+		}
+
+		chrome.runtime.sendMessage({cmd: "setProjects"}, function(response) {
 			console.log(response);
-			if(!response.result || response.result === "error") return;
-			projects = response.result;
 		});
-
-		for(i = 0; i < projects.length; i++) {
-	    	let name = projects[i].name;
-			var ul = document.getElementById("list");
-			var li = document.createElement("li");
-			li.setAttribute('id', name);
-			li.appendChild(document.createTextNode(name));
-			ul.appendChild(li);
-	    }
 	};
 }
 
