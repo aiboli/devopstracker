@@ -13,22 +13,11 @@ $(document).ready(function() {
             });
         } else {
             // let user to input data
-            console.log('no data');
+			console.log('no data');
+			renderAddCredential();
         }
     });
 });
-
-// function hasCachedData() {
-//     chrome.storage.sync.get(['projectId', 'teamId', 'token','projectName', 'teamName'], function(result) {
-//         // if it is cached
-//         console.log(result);
-//         if (result.projectId && result.teamId && result.token) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     });
-// }
 
 function getWorkItems(projectid, teamid, token, callback) {
 	// send request to query all the work items
@@ -146,4 +135,12 @@ function sortWorkItem(array) {
 	};
 	array.sort(function(a,b) { return ordering[b.fields['System.State']] - ordering[a.fields['System.State']]; })
 	return array;
+}
+
+function renderAddCredential() {
+	$('#workitem-list').append(`<tr>
+	<td></td>
+	<td class="center">Please set credential by clicking the extension icon</td>
+	<td></td>
+	</tr>`);
 }

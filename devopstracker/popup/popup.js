@@ -268,7 +268,7 @@ function getWorkItems(projectid, teamid, callback) {
 				"Content-Type":"application/json",
 				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
 			},
-		}).done(function(res2) {	
+		}).done(function(res2) {
 			let items = res2.value;
 			for(i = 0; i < items.length; i++) {
 				let id = items[i].id;
