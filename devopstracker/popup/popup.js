@@ -5,7 +5,7 @@
 //   };
 // }
 
-let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
+let access_token = "";
 let projects = [];
 let teams = [];
 let work_items = {};
@@ -120,14 +120,28 @@ if (getProjectsBtn) {
 		}
 	};
 }
+
 // listeners
-
-// const projectsDropdown = document.getElementById("project-list");
-// if (projectsDropdown) {
-// 	projectsDropdown.onchange = function() {
-
-// 	}
-// }
+// setting token button
+$('#settoken').on('click', function() {
+	let tokenid = $('#token').val();//$("#project-list").find(':selected').attr('id');
+	if (!tokenid && tokenid == '') {
+		alert('invalid token input, please retry');
+		return;
+	}
+	// check if token works
+	checkIfTokenWork(tokenid, function(res) {
+		if (res) {
+			alert('valid token, please choose project and team');
+			global_token = access_token = tokenid;
+			chrome.runtime.sendMessage({cmd: "setToken", token: access_token}, function(response) {
+				console.log(response);
+			});
+		} else {
+			alert('invalid token, please retry');
+		}
+	})
+});
 
 $('#project-list').on('change', function() {
 	let projectId = $(this).val();//$("#project-list").find(':selected').attr('id');
@@ -231,13 +245,31 @@ function createTeamOption(team) {
 	return option;
 }
 
+function checkIfTokenWork(token, callback) {
+	console.log(token);
+	$.ajax({
+		  type: 'GET',
+		  url: `https://dev.azure.com/microsoft/_apis/projects?api-version=6.0-preview.4`,
+		  headers: {
+			  "Content-Type":"application/json; charset=utf-8;",
+			  "Authorization": "Basic " + btoa('Basic' + ":" + token)
+		  }
+	  }).done(function(res) {
+		  return callback(res);
+	  }).fail(function(err) {
+		  console.log(err);
+		  return callback(null, err);
+	  });
+  }
+
+
 function getTeamsByProject(projectId, callback) {
   $.ajax({
 		type: 'GET',
 		url: `https://dev.azure.com/microsoft/_apis/projects/${projectId}/teams?api-version=6.0-preview.3`,
 		headers: {
 			"Content-Type":"application/json; charset=utf-8;",
-			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+			"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
 		}
 	}).done(function(res) {
 		return callback(res);
@@ -253,7 +285,7 @@ function getWorkItems(projectid, teamid, callback) {
 		url: `https://dev.azure.com/microsoft/${projectid}/${teamid}/_apis/wit/wiql?api-version=5.1`,
 		headers: {
 			"Content-Type":"application/json",
-			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+			"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
 		},
 		data: JSON.stringify({
 			"query": "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.State] <> 'Completed' AND [System.State] <> 'Resolved' AND [System.State] <> 'Closed' AND [System.State] <> 'Cut' AND [System.AssignedTo] = @me"
@@ -266,7 +298,7 @@ function getWorkItems(projectid, teamid, callback) {
 			url: `https://dev.azure.com/microsoft/_apis/wit/workitems?ids=${ids.toString()}&api-version=6.0-preview.3`,
 			headers: {
 				"Content-Type":"application/json",
-				"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+				"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
 			},
 		}).done(function(res2) {
 			let items = res2.value;
@@ -286,12 +318,10 @@ function getWorkItems(projectid, teamid, callback) {
 				console.log(response);
 			});
 
-			if(user_name.length === 0) {
-				let name = items[0].fields["System.AssignedTo"].displayName.split(" ");
-				chrome.runtime.sendMessage({cmd: "setName", name: name}, function(response) {
-					console.log(response);
-				});
-			}
+			let name = items[0].fields["System.AssignedTo"].displayName.split(" ");
+			chrome.runtime.sendMessage({cmd: "setName", name: name}, function(response) {
+				console.log(response);
+			});
 			return callback(res2);
 		}).fail(function(err2){
 			console.log(err2);
@@ -322,16 +352,14 @@ function fillProjectsDropdown() {
 	}
 }
 
-const tokenInput = document.getElementById("token");
-const setTokenBtn = document.getElementById("settoken");
-if (setTokenBtn) {
-	setTokenBtn.onclick = function() {
-		let pat = tokenInput.value;
-		if (pat === "") return;
-		access_token = pat;
-		chrome.runtime.sendMessage({cmd: "setToken", token: access_token}, function(response) {
-			console.log(response);
-		});
-		tokenInput.value = '';
-	}
-}
+// const tokenInput = document.getElementById("token");
+// const setTokenBtn = document.getElementById("settoken");
+// if (setTokenBtn) {
+// 	setTokenBtn.onclick = function() {
+// 		let pat = tokenInput.value;
+// 		if (pat === "") return;
+// 		access_token = pat;
+
+// 		tokenInput.value = '';
+// 	}
+// }

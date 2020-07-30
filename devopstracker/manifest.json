@@ -1,13 +1,13 @@
 {
-  "name": "Chromium Extension Tutorial P1",
+  "name": "Devops Tracker",
   "version": "0.0.0.1",
   "manifest_version": 2,
-  "description": "A chromium extension to show NASA's Picture of the Day.",
+  "description": "A chromium extension to track your work items.",
   "icons": {
-    "16": "icons/nasapod16x16.png",
-    "32": "icons/nasapod32x32.png",
-    "48": "icons/nasapod48x48.png",
-    "128": "icons/nasapod128x128.png"
+    "16": "icons/devops.png",
+    "32": "icons/devops.png",
+    "48": "icons/devops.png",
+    "128": "icons/devops.png"
   },
   "content_scripts": [
     {

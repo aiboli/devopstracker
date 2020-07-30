@@ -1,4 +1,4 @@
-let access_token = "rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya";
+let access_token = "";
 let projects = [];
 let teams = [];
 let work_items = {};
@@ -61,7 +61,7 @@ function getMyTeams(callback) {
 		url: 'https://dev.azure.com/microsoft/_apis/teams?api-version=6.0-preview.3&$mine=true',
 		headers: {
 			"Content-Type":"application/json; charset=utf-8;",
-			"Authorization": "Basic " + btoa('Basic' + ":" + 'rzzq3rpwxygmcetwrtdnu4rigavoeltaboes5vsiewbbucpdq3ya')
+			"Authorization": "Basic " + btoa('Basic' + ":" + access_token)
 		}
 	}).done(function(res) {
 		return callback(res);

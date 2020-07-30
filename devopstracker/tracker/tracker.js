@@ -94,11 +94,11 @@ function getWorkItemsList(data) {
 
 function getWorkItemsIcon(type) {
 	if (type === 'Deliverable') {
-		return `<i class="fa fa-bug" style="font-size:20px"></i>`;
-	} else if (type === 'Bug') {
-		return `<i class="fa fa-check-square" style="font-size:20px"></i>`;
-	} else if (type === 'Task') {
 		return `<i class="fa fa-trophy" style="font-size:20px"></i>`;
+	} else if (type === 'Bug') {
+		return `<i class="fa fa-bug" style="font-size:20px"></i>`;
+	} else if (type === 'Task') {
+		return `<i class="fa fa-check-square" style="font-size:20px"></i>`;
 	} else {
 		return '';
 	}
