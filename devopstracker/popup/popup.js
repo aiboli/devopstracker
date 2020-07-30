@@ -238,6 +238,10 @@ $('#clearsetting').on('click', function() {
 	$('#selected-team').hide();
 	$('.settoken-button').attr('disabled', false);
 	$('.getprojects-button').attr('disabled', false);
+	chrome.runtime.sendMessage({cmd: "setName", name: null}, function(response) {
+		console.log(response);
+		alert('clear settings successfully');
+	});
 });
 
 function createTeamOption(team) {

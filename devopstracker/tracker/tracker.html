@@ -145,14 +145,28 @@
             width: 100%;
         }
 
-        th {
-            border-bottom: 1px solid #ddd;
-            padding: 10px 5px;
+        .workitem-list-container {
+          max-height: 500px;
+          overflow: auto;
+          -ms-overflow-style: none;
+          scrollbar-width: none;
         }
 
+        .workitem-list-container::-webkit-scrollbar {
+          display: none;
+        }
+
+        th {
+            padding: 10px 5px;
+        }
+        tr {
+          border-bottom: 1px solid #ddd;
+        }
+        tbody tr:last-child {
+          border-bottom: none;
+        }
         td {
-            border-bottom: 1px solid #ddd;
-            padding: 7px 10px;
+            padding: 5px 10px;
         }
 
         .center {
